@@ -1,15 +1,30 @@
+import { useRef } from "react";
 import { useGlobalContext } from "../Context/context";
 import sublinks from "../data";
 
 const Submenu = () => {
-  const { contextPageId } = useGlobalContext();
-  console.log(contextPageId);
+  const { contextPageId, setContextPageId } = useGlobalContext();
   const currentPage = sublinks.find((item) => item.pageId === contextPageId);
+
+  const submenuContainer = useRef(null);
+
+  const handleMouseLeave = (event) => {
+    const submenu = submenuContainer.current;
+    const { left, right, bottom } = submenu.getBoundingClientRect();
+    const { clientX, clientY } = event;
+
+    if (clientX < left - 1 || clientY > bottom - 1 || clientX > right - 1) {
+      setContextPageId(null);
+    }
+  };
+
   return (
     <div className="hidden min-[992px]:grid">
       <div
-        className={` fixed top-24 w-[90vw] max-w-[1120px] bg-white p-8 left-[50%]  translate-x-[-50%] origin-top [perspective:1000px] transition-transform ${
-          contextPageId ? "visible opacity-100  " : "invisible opacity-0"
+        onMouseLeave={handleMouseLeave}
+        ref={submenuContainer}
+        className={` fixed top-24 w-[90vw] max-w-[1120px] bg-white p-8 left-[50%]  translate-x-[-50%] origin-top [perspective:1000px] transition-transform -z-10 ${
+          contextPageId ? "visible opacity-100 z-10 " : "invisible opacity-0"
         }`}
       >
         <h5 className="capitalize text-indigo-700 text-xl">
